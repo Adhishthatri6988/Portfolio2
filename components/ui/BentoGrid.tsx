@@ -1,16 +1,17 @@
+"use client";
+
 import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
-
-// Also install this npm i --save-dev @types/react-lottie
-import Lottie from "react-lottie";
+import dynamic from 'next/dynamic';
 
 import { cn } from "@/lib/utils";
-
-
 import { BackgroundGradientAnimation } from "./GradientBg";
 import GridGlobe from "./GridGlobe";
 import animationData from "@/data/confetti.json";
 import MagicButton from "../MagicButton";
+
+// Dynamic import of Lottie with SSR disabled
+const Lottie = dynamic(() => import('react-lottie'), { ssr: false });
 
 export const BentoGrid = ({
   className,
@@ -66,10 +67,16 @@ export const BentoGridItem = ({
     },
   };
 
-  const handleCopy = () => {
-    const text = "asunasingh2003@gmail.com";
-    navigator.clipboard.writeText(text);
-    setCopied(true);
+  const handleCopy = async () => {
+    if (typeof window !== "undefined") {
+      const text = "asunasingh2003@gmail.com";
+      try {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+      } catch (err) {
+        console.error("Failed to copy text: ", err);
+      }
+    }
   };
 
   return (
